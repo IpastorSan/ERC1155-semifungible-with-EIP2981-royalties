@@ -22,6 +22,7 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
     mapping (uint256 => uint256) public tokenPrice;
     mapping (uint256 => uint256) public maxTokensPerId;
     mapping (uint256 => uint256) public maxTokensPerAddress;
+    mapping(uint256 => bool) public tokenExists;
     
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -96,6 +97,7 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
         mapIdToLocator(id, givenURL);
         maxTokensPerId[id] = _maxTokensPerId;
         maxTokensPerAddress[id] = _maxTokensPerAddress;
+        tokenExists[id] = true;
         
         return id;
     }
@@ -104,6 +106,7 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
     ///@notice mints a previously created Token
     ///@param data if this parameter was created empty, we need to call the function with "0x"
     function mintToUser(uint256 id, uint256 _amount, bytes memory data) public payable callerIsUser returns (uint256) {
+        require(tokenExists[id] == true, "Token Id does not exist");
         uint256 _price = tokenPrice[id];
 
         //NFT mint validation

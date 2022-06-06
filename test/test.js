@@ -23,7 +23,7 @@ describe("CarbonBits", () => {
     nft = await nftFactory.deploy()
 
     await nft.createNewToken(owner, 1, ethers.utils.parseUnits("5", "ether"), 1000, 5, "0x", "QmXgePKdYNwX7gN9yjjMA97q23buh1T7HqBDKyzhEnVMnZ")
-    await nft.openPublicSale()
+
 
   })
 
@@ -124,7 +124,7 @@ describe("CarbonBits Royalties", () => {
     await nft.createNewToken(owner, 10, ethers.utils.parseUnits("5", "ether"), 1000, 5, "0x", "QmXgePKdYNwX7gN9yjjMA97q23buh1T7HqBDKyzhEnVMnZ")
     await marketplace.setNFTContract(nft.address)
     await nft.setRoyaltiesAddress(owner)
-    await nft.openPublicSale()
+
 
   })
   it("should aprove, list and sell a token in the marketplace, 10% of price should go to royalties address", async () => {

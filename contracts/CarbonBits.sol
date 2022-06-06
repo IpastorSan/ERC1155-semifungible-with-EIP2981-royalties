@@ -15,8 +15,6 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
     bytes4 private constant _INTERFACE_ID_ERC2981 = 0x2a55205a;
     address public ROYALTIESADDRESS = owner(); 
     uint256 public ROYALTIESPOINTS = 1000; //10%
-
-    bool private publicSaleIsOpen = false;
     
     //Token config.
     mapping (uint => string) public locator;
@@ -61,14 +59,8 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
         maxTokensPerId[_id] = _newMaxTokensPerId;
     }
     
-
     function setMaxTokensPerAddress(uint256 _id, uint256 _newMaxTokensPerAddress) public onlyOwner {
         maxTokensPerAddress[_id] = _newMaxTokensPerAddress;
-    }
-
-    function openPublicSale() external onlyOwner {
-        require(publicSaleIsOpen == false, 'Open Sale is already Open!');
-        publicSaleIsOpen = true;
     }
 
     function uri(uint256 _id) public view override(ERC1155, IERC1155MetadataURI) returns (string memory)
@@ -79,7 +71,15 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
     function mapIdToLocator(uint _tokenId, string memory locale) internal {
         locator[_tokenId] = locale;
     }
-    
+
+    /// @dev Creation of a new Token by owner
+    /// @param account. If @param amount is non-zero, 
+    ///the token will be created and minted in the same transaction to this address
+    ///@param _price price for this tokenId
+    ///@param _maxTokensPerId max number of mintable tokens for any given tokenId
+    ///@param _maxTokensPerAddress max numbers of this tokenId that any given address is allowed to own
+    ///@param data, additional data. Can be empty using "0x"
+    ///@param givenURL IPFS CID address.
     function createNewToken(address account, uint256 amount, uint256 _price, uint256 _maxTokensPerId, uint256 _maxTokensPerAddress, 
     bytes memory data, string memory givenURL) public onlyOwner returns (uint256) {
 
@@ -100,11 +100,13 @@ contract CarbonBits is Ownable, ERC2981ContractRoyalties, IERC1155MetadataURI, E
         return id;
     }
 
+    ///@dev this is the function that the user interacts with
+    ///@notice mints a previously created Token
+    ///@param data if this parameter was created empty, we need to call the function with "0x"
     function mintToUser(uint256 id, uint256 _amount, bytes memory data) public payable callerIsUser returns (uint256) {
         uint256 _price = tokenPrice[id];
 
         //NFT mint validation
-        require(publicSaleIsOpen == true, "Public Sale is not Open");
         require(msg.value == _amount * _price, "Not enough/too much ether sent");
         require(getTotalSupplyByTokenId(id) + _amount <= maxTokensPerId[id], "Not enough tokens left in the collection");
         require(balanceOf(msg.sender, id) + _amount <= maxTokensPerAddress[id], "Cannot mint more tokens with the same address");

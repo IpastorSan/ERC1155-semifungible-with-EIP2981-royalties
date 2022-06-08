@@ -18,7 +18,11 @@ This implementation is suitable for:
 
 Other features:
 - EIP-2981 royalties. Set to send 5% of sales proceeds to the deployer of the contract. Note that even if I am using (owner()) in the constructor, this is a piece of information that needs to be overwritten calling ````setRoyalties```` if the contract change Owner.
-- - ````withdraw()```` function. This allows to withdraw all ETH from the contract to the Owner. 
+- ````withdraw()```` function. This allows to withdraw all ETH from the contract to the Owner. 
+
+Some basic Waffle tests are included, as well as a gas report from [hardhat-gas-reporter](https://www.npmjs.com/package/hardhat-gas-reporter)
+
+![gasreport](https://github.com/IpastorSan/ERC1155-semifungible-with-EIP2981-royalties/blob/master/gas-report.png)
 
 ## Useful commands to run the project 
 
